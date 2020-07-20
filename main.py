@@ -43,6 +43,10 @@ def callback():
     return 'OK'
 
 
+# 興趣變數暫存
+
+interest = 0
+
 # 歡迎訊息
 
 
@@ -104,6 +108,8 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     if event.postback.data == 'theme=1':
+        global interest
+        interest = 1
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
             template=ConfirmTemplate(
@@ -125,6 +131,8 @@ def postback_data(event):
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
     elif event.postback.data == 'theme=2':
+        global interest
+        interest = 2
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
             template=ConfirmTemplate(
@@ -166,7 +174,10 @@ def postback_data(event):
 def handle_price_message(event):
     try:
         if int(event.message.text):
-            price_ans = TextSendMessage("你要猜這個價格嗎？")
+            if interest == 1:
+                price_ans = TextSendMessage("你要iphone猜這個價格嗎？")
+            elif interest == 2:
+                price_ans = TextSendMessage("你要switch猜這個價格嗎？")
         line_bot_api.reply_message(event.reply_token, price_ans)
     except:
         pass
