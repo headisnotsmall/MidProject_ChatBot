@@ -108,6 +108,7 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     if event.postback.data == 'theme=1':
+        global interest
         interest = 1
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
@@ -130,6 +131,7 @@ def postback_data(event):
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
     elif event.postback.data == 'theme=2':
+        global interest
         interest = 2
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
