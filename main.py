@@ -11,10 +11,9 @@ from linebot.models import (
     MessageAction, URIAction, ButtonsTemplate, PostbackAction, Postback, PostbackEvent,
     QuickReply, QuickReplyButton, ImageSendMessage
 )
-
 import json
-
 import os
+from config import interest
 
 app = Flask(__name__)
 
@@ -108,7 +107,6 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     if event.postback.data == 'theme=1':
-        global interest
         interest = 1
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
@@ -131,7 +129,6 @@ def postback_data(event):
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
     elif event.postback.data == 'theme=2':
-        global interest
         interest = 2
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
@@ -164,6 +161,7 @@ def postback_data(event):
                                        "Switch紅藍款 (主機only)\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
+    return interest
 
 
 # TODO 問題2 購買意願
