@@ -45,6 +45,7 @@ def callback():
 
 # 興趣變數暫存
 
+global interest
 interest = 0
 
 # 歡迎訊息
