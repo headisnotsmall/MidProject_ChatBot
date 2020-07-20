@@ -98,9 +98,9 @@ def handle_follow(event):
 # 詢問經驗
 
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_text_message(event):
-    if PostbackEvent.data == 'theme=1':
+@handler.add(PostbackEvent)
+def postback_lvl1(event):
+    if PostbackEvent. == 'theme=1':
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
             template=ConfirmTemplate(
@@ -126,7 +126,7 @@ def handle_text_message(event):
         #
         # reply_text_message = TextSendMessage("請問您是否持有iPhone手機？", quick_reply=quick_reply_array)
         #
-        # line_bot_api.reply_message(event.reply_token, [reply_text_message])
+        line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
     elif event.message.text == '我想猜猜電玩產品':
         text_quickreply1 = QuickReplyButton(action=MessageAction(label="有", text="我有Switch"))
