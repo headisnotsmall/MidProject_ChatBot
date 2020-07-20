@@ -14,6 +14,8 @@ from linebot.models import (
 
 import json
 
+import os
+
 app = Flask(__name__)
 
 line_bot_api = LineBotApi(
@@ -185,4 +187,4 @@ def handle_price_message(event):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=os.environ['PORT'])
