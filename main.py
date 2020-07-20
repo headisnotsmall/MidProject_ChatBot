@@ -113,7 +113,7 @@ def handle_text_message(event):
                     ),
                     PostbackAction(
                         label='沒有',
-                        display_text='我梅有用過iPhone',
+                        display_text='我沒有用過iPhone',
                         data='theme=1&have=0'
                     )
                 ]

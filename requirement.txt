@@ -1,0 +1,6 @@
+line-bot-sdk
+flask
+boto3
+matplotlib.pyplot
+csv
+json
