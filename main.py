@@ -40,6 +40,7 @@ def callback():
 
     return 'OK'
 
+
 # 歡迎訊息
 
 
@@ -63,7 +64,7 @@ def handle_follow(event):
         "先試試看你對甚麼領域有興趣吧！"
     )
 
-# 詢問喜好
+    # 詢問喜好
 
     buttons_template_message = TemplateSendMessage(
         alt_text='Buttons template',
@@ -99,8 +100,8 @@ def handle_follow(event):
 
 
 @handler.add(PostbackEvent)
-def postback_lvl1(event):
-    if PostbackEvent. == 'theme=1':
+def postback_data(event):
+    if event.postback.data == 'theme=1':
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
             template=ConfirmTemplate(
@@ -119,68 +120,55 @@ def postback_lvl1(event):
                 ]
             )
         )
-        # text_quickreply1 = QuickReplyButton(action=MessageAction(label="有", text="我有iPhone"))
-        # text_quickreply2 = QuickReplyButton(action=MessageAction(label="沒有", text="我沒有iPhone"))
-        #
-        # quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
-        #
-        # reply_text_message = TextSendMessage("請問您是否持有iPhone手機？", quick_reply=quick_reply_array)
-        #
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif event.message.text == '我想猜猜電玩產品':
-        text_quickreply1 = QuickReplyButton(action=MessageAction(label="有", text="我有Switch"))
-        text_quickreply2 = QuickReplyButton(action=MessageAction(label="沒有", text="我沒有Switch"))
+    elif event.postback.data == 'theme=2':
+        confirm_template_message = TemplateSendMessage(
+            alt_text='你有用過Switch嗎？',
+            template=ConfirmTemplate(
+                text='想了解你使用Switch的經驗',
+                actions=[
+                    PostbackAction(
+                        label='有',
+                        display_text='我有用過Switch',
+                        data='theme=2&have=1'
+                    ),
+                    PostbackAction(
+                        label='沒有',
+                        display_text='我沒有用過Switch',
+                        data='theme=2&have=0'
+                    )
+                ]
+            )
+        )
+        line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-        quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
-
-        reply_text_message = TextSendMessage("請問您是否持有Switch主機？", quick_reply=quick_reply_array)
-
-        line_bot_api.reply_message(event.reply_token, [reply_text_message])
-
-    elif event.message.text in {"我有iPhone", "我沒有iPhone"}:
+    elif event.postback.data in ['theme=1&have=0', 'theme=1&have=1']:
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "iPhone 11 Pro 64G\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
-    elif event.message.text in {"我有Switch", "我沒有Switch"}:
+    elif event.postback.data in ['theme=2&have=0', 'theme=2&have=1']:
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "Switch紅藍款 (主機only)\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
-    # elif event.message.text == '我想猜猜甜點價位':
-    #     text_quickreply1 = QuickReplyButton(action=MessageAction(label="喜歡", text="我喜歡吃甜點"))
-    #     text_quickreply2 = QuickReplyButton(action=MessageAction(label="不喜歡", text="我不喜歡吃甜點"))
-    #
-    #     quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
-    #
-    #     reply_text_message = TextSendMessage("請問您是否喜歡吃甜點？", quick_reply=quick_reply_array)
-    #
-    #     line_bot_api.reply_message(event.reply_token, [reply_text_message])
 
 # TODO 問題2 購買意願
 
 # TODO 估計價錢、回傳高估or低估 要用postback
 
+@handler.add(MessageEvent, message=TextMessage)
+def handle_price_message(event):
+    try:
+        if int(event.message.text):
+            price_ans = TextSendMessage("你要猜這個價格嗎？")
+        line_bot_api.reply_message(event.reply_token, price_ans)
+    except:
+        pass
 
-# @handler.add(MessageEvent, message=TextMessage)
-# def handle_message(event):
-#     if event.message.text == "我有iPhone" or "我沒有iPhone":
-#         price_asking = TextSendMessage("猜猜看現在一台\n"
-#                                        "iPhone 11 Pro 64G\n"
-#                                        "售價大概多少錢呢？")
-#         line_bot_api.reply_message(event.reply_token, price_asking)
-#     elif event.message.text in {"我有Switch", "我沒有Switch"}:
-#         price_asking = TextSendMessage("猜猜看現在一台\n"
-#                                        "Switch紅藍款 (主機only)\n"
-#                                        "售價大概多少錢呢？")
-#         line_bot_api.reply_message(event.reply_token, price_asking)
-
-    # elif event.message.text == "我喜歡吃甜點" or "我不喜歡吃甜點":
-    #     pass # todo 甜點資料
-    #     line_bot_api.reply_message(event.reply_token, [price_asking])
 
 # TODO 回傳統計圖表
 
