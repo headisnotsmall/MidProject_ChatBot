@@ -13,7 +13,6 @@ from linebot.models import (
 )
 import json
 import os
-from config import interest
 
 app = Flask(__name__)
 
@@ -106,6 +105,7 @@ def handle_follow(event):
 
 @handler.add(PostbackEvent)
 def postback_data(event):
+    global interest
     if event.postback.data == 'theme=1':
         interest = 1
         confirm_template_message = TemplateSendMessage(
