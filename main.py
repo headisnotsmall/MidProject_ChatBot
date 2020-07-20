@@ -195,5 +195,9 @@ def handle_price_message(event):
 # TODO 圖文選單
 
 
+# if __name__ == "__main__":
+#     app.run()
+
+# https://howimuchisthis.herokuapp.com
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=os.environ['PORT'])
