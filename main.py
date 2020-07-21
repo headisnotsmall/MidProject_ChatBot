@@ -43,8 +43,7 @@ def callback():
 
 # 興趣變數暫存
 
-interest = 0
-
+interest = ""
 # 歡迎訊息
 
 
@@ -80,17 +79,17 @@ def handle_follow(event):
                 PostbackAction(
                     label='3c',
                     display_text='我想猜猜3c產品',
-                    data='theme=1'
+                    data='theme=1,'
                 ),
                 PostbackAction(
                     label='電玩',
                     display_text='我想猜猜看電玩價格',
-                    data='theme=2'
+                    data='theme=2,'
                 ),
                 PostbackAction(
                     label='甜點',
                     display_text='我想猜猜甜點價位',
-                    data='theme=3'
+                    data='theme=3,'
                 )
             ]
         )
@@ -106,8 +105,8 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     global interest
-    if event.postback.data == 'theme=1':
-        interest = 1
+    if event.postback.data == 'theme=1,':
+        interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
             template=ConfirmTemplate(
@@ -116,12 +115,12 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過iPhone',
-                        data='theme=1&have=1'
+                        data='have=1,'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過iPhone',
-                        data='theme=1&have=0'
+                        data='have=0,'
                     )
                 ]
             )
@@ -129,7 +128,7 @@ def postback_data(event):
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
     elif event.postback.data == 'theme=2':
-        interest = 2
+        interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
             template=ConfirmTemplate(
@@ -138,25 +137,25 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過Switch',
-                        data='theme=2&have=1'
+                        data='have=1'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過Switch',
-                        data='theme=2&have=0'
+                        data='have=0'
                     )
                 ]
             )
         )
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif event.postback.data in ['theme=1&have=0', 'theme=1&have=1']:
+    elif interest == ('theme=1,have=0' or 'theme=1,have=1'):
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "iPhone 11 Pro 64G\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
-    elif event.postback.data in ['theme=2&have=0', 'theme=2&have=1']:
+    elif interest == ('theme=2,have=0' or 'theme=2,have=1'):
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "Switch紅藍款 (主機only)\n"
                                        "售價大概多少錢呢？")
@@ -164,21 +163,25 @@ def postback_data(event):
     return interest
 
 
-# TODO 問題2 購買意願
+# 問題2 購買意願
 
-# TODO 估計價錢、回傳高估or低估 要用postback
+# 估計價錢、回傳高估or低估 要用postback
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_price_message(event):
+    global interest
     try:
         if int(event.message.text):
-            if interest == 1:
-                price_ans = TextSendMessage("你要iphone猜這個價格嗎？")
-            elif interest == 2:
-                price_ans = TextSendMessage("你要switch猜這個價格嗎？")
+            if interest == ('theme=1,have=0' or 'theme=1,have=1'):
+                interest = interest + event.postback.data
+                price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
+            elif interest == ('theme=2,have=0' or 'theme=2,have=1'):
+                interest = interest + event.postback.data
+                price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
         line_bot_api.reply_message(event.reply_token, price_ans)
     except:
         pass
+    return interest
 
 
 # TODO 回傳統計圖表
