@@ -17,31 +17,32 @@ total = 0
 with open("i11price.csv") as f:
     dic = csv.DictReader(f)
     for row in dic:
-        if int(row["price"]) < 35900 - 3590:
-            below += 1
-            if row["own"] == "1":
-                be_v += 1
+        if row["theme"] == "1":
+            if int(row["price"]) < 35900 - 3590:
+                below += 1
+                if row["have"] == "1":
+                    be_v += 1
+                else:
+                    be_x += 1
+            elif int(row["price"]) > 35900 + 3590:
+                over += 1
+                if row["have"] == "1":
+                    ov_v += 1
+                else:
+                    ov_x += 1
             else:
-                be_x += 1
-        elif int(row["price"]) > 35900 + 3590:
-            over += 1
-            if row["own"] == "1":
-                ov_v += 1
-            else:
-                ov_x += 1
-        else:
-            just += 1
-            if row["own"] == "1":
-                ju_v += 1
-            else:
-                ju_x += 1
-        total += 1
+                just += 1
+                if row["have"] == "1":
+                    ju_v += 1
+                else:
+                    ju_x += 1
+            total += 1
 print(just, ju_v, ju_x, over, ov_v, ov_x, below, be_v, be_x)
 
 # Make data: I have 3 groups and 7 subgroups
 group_names = ['over', 'below', 'just']
 group_size = [over, below, just]
-subgroup_names = ['own', "don't have", 'own', "don't have", 'own', "don't have"]
+subgroup_names = ['have', "don't have", 'have', "don't have", 'have', "don't have"]
 subgroup_size = [ov_v, ov_x, be_v, be_x, ju_v, ju_x]
 
 # Create colors
@@ -62,6 +63,6 @@ plt.setp(mypie2, width=0.4, edgecolor='white')
 plt.margins(0, 0)
 
 fig.savefig("chart.png")
+plt.show()
 plt.close(fig)
 # show it
-plt.show()

@@ -12,6 +12,7 @@ from linebot.models import (
     QuickReply, QuickReplyButton, ImageSendMessage
 )
 import json
+import csv
 import os
 
 app = Flask(__name__)
@@ -45,7 +46,7 @@ def callback():
 
 interest = ""
 _id = ""
-
+# todo 兩人同時使用bot的問題
 
 # 歡迎訊息
 
@@ -84,12 +85,12 @@ def handle_follow(event):
                 PostbackAction(
                     label='3c',
                     display_text='我想猜猜3c產品',
-                    data='"theme":1,'
+                    data='iphone,'
                 ),
                 PostbackAction(
                     label='電玩',
                     display_text='我想猜猜看電玩價格',
-                    data='"theme":2,'
+                    data='switch,'
                 ),
                 # PostbackAction(
                 #     label='甜點',
@@ -102,7 +103,7 @@ def handle_follow(event):
 
     line_bot_api.reply_message(event.reply_token, [follow_text_send_message,
                                                    buttons_template_message])
-    return _id, print(_id)
+    return
 
 # 詢問經驗
 
@@ -110,7 +111,7 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     global interest
-    if event.postback.data == '"theme":1,':
+    if event.postback.data == 'iphone,':
         interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
@@ -120,19 +121,19 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過iPhone',
-                        data='"have":1,'
+                        data='have,'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過iPhone',
-                        data='"have":0,'
+                        data='not_have,'
                     )
                 ]
             )
         )
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif event.postback.data == '"theme":2,':
+    elif event.postback.data == 'switch,':
         interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
@@ -142,26 +143,26 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過Switch',
-                        data='"have":1,'
+                        data='have,'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過Switch',
-                        data='"have":0,'
+                        data='not_have,'
                     )
                 ]
             )
         )
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif interest == '"theme":1,':
+    elif interest == 'iphone,':
         interest = interest + event.postback.data
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "iPhone 11 Pro 64G\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
-    elif interest == '"theme":2,':
+    elif interest == 'switch,':
         interest = interest + event.postback.data
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "Switch紅藍款 (主機only)\n"
@@ -179,39 +180,68 @@ def handle_price_message(event):
     global interest
     try:
         if int(event.message.text):
-            if interest in ['"theme":1,"have":0,', '"theme":1,"have":1,']:
-                interest = "{" + interest + '"price":' + event.message.text + "}"
+            if interest in ['iphone,not_have,', 'iphone,have,']:
+                interest = interest + event.message.text
                 reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
-            elif interest in ['"theme":2,"have":0,', '"theme":2,"have":1,']:
-                interest = "{" + interest + '"price":' + event.message.text + "}"
+            elif interest in ['switch,not_have,', 'switch,have,']:
+                interest = interest + event.message.text
                 reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
-            line_bot_api.reply_message(event.reply_token, reply_message)
-            with open("guesslist.txt", "a") as myfile:
-                myfile.write(interest)
-                myfile.write("\r")
+
+            text_quickreply1 = QuickReplyButton(action=MessageAction(label="正確", text="就猜這個"))
+            text_quickreply2 = QuickReplyButton(action=MessageAction(label="錯誤", text="那我們重來一次"))
+            quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
+
+            reply_text_message = TextSendMessage(reply_message.text, quick_reply=quick_reply_array)
+            line_bot_api.reply_message(event.reply_token, reply_text_message)
+            with open("guesslist.csv", "a") as csvfile:
+                writer = csv.writer(csvfile)
+                li = interest.split(",")
+                writer.writerow(li)
+
     except:
-        pass
+        if event.message.text == "就猜這個":
+            static_chart = ImageSendMessage(
+                original_content_url="https://images.plurk.com/2nA3V4zBaRMtPicEvrK4pC.jpg",
+                preview_image_url="https://images.plurk.com/29raxzfw1iC52tLqlPTVz1.jpg"
+            )
+            line_bot_api.reply_message(event.reply_token, static_chart)
+        elif event.message.text == "那我們重來一次":
+            buttons_template_message = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    thumbnail_image_url='https://images.plurk.com/64ZDVCsKT7rRdkODQ9xWnN.jpg',
+                    title='我想猜這個',
+                    text='選一個有興趣的領域吧！',
+                    actions=[
+                        PostbackAction(
+                            label='3c',
+                            display_text='我想猜猜3c產品',
+                            data='iphone,'
+                        ),
+                        PostbackAction(
+                            label='電玩',
+                            display_text='我想猜猜看電玩價格',
+                            data='switch,'
+                        ),
+                        # PostbackAction(
+                        #     label='甜點',
+                        #     display_text='我想猜猜甜點價位',
+                        #     data='"theme":3,'
+                        # )
+                    ]
+                )
+            )
+            line_bot_api.reply_message(event.reply_token, buttons_template_message)
     interest = ""
     return interest
 
 
-# TODO 回傳統計圖表
-
-#
-# @handler.add(MessageEvent, message=TextMessage)
-# def handle_image_message(event):
-#     static_chart = ImageSendMessage(
-#         original_content_url="./chart.png",
-#         preview_image_url=""
-#     )
-#     line_bot_api.reply_message(event.reply_token, [static_chart])
-
 # TODO 圖文選單
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
 
 # https://howimuchisthis.herokuapp.com
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0', port=os.environ['PORT'])
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ['PORT'])
