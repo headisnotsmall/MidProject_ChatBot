@@ -214,13 +214,13 @@ def handle_price_message(event):
                     text='選一個有興趣的領域吧！',
                     actions=[
                         PostbackAction(
-                            label='3c',
-                            display_text='我想猜猜3c產品',
+                            label='3c (iPhone)',
+                            display_text='我想猜猜iPhone的價格',
                             data='iphone,'
                         ),
                         PostbackAction(
-                            label='電玩',
-                            display_text='我想猜猜看電玩價格',
+                            label='電玩 (Switch)',
+                            display_text='我想猜猜看Switch的價格',
                             data='switch,'
                         ),
                         # PostbackAction(
