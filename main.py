@@ -174,11 +174,11 @@ def handle_price_message(event):
     global interest
     try:
         if int(event.message.text):
-            if interest == ('theme=1,have=0,' or 'theme=1,have=1,'):
+            if interest in ['theme=1,have=0,', 'theme=1,have=1,']:
                 interest = interest + event.message.text
                 price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
                 backinfo = TextSendMessage(interest.text)
-            elif interest == ('theme=2,have=0,' or 'theme=2,have=1,'):
+            elif interest in ['theme=2,have=0,', 'theme=2,have=1,']:
                 interest = interest + event.message.text
                 price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
                 backinfo = TextSendMessage(interest.text)
