@@ -91,11 +91,11 @@ def handle_follow(event):
                     display_text='我想猜猜看電玩價格',
                     data='"theme":2,'
                 ),
-                PostbackAction(
-                    label='甜點',
-                    display_text='我想猜猜甜點價位',
-                    data='"theme":3,'
-                )
+                # PostbackAction(
+                #     label='甜點',
+                #     display_text='我想猜猜甜點價位',
+                #     data='"theme":3,'
+                # )
             ]
         )
     )
@@ -181,13 +181,11 @@ def handle_price_message(event):
         if int(event.message.text):
             if interest in ['"theme":1,"have":0,', '"theme":1,"have":1,']:
                 interest = "{" + interest + '"price":' + event.message.text + "}"
-                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + interest)
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
             elif interest in ['"theme":2,"have":0,', '"theme":2,"have":1,']:
                 interest = "{" + interest + '"price":' + event.message.text + "}"
-                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + interest)
-
-            line_bot_api.reply_message(event.reply_token, reply_message)  # fixme 拿掉sendmessage的interest
-
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
+            line_bot_api.reply_message(event.reply_token, reply_message)
             with open("guesslist.txt", "a") as myfile:
                 myfile.write(interest)
                 myfile.write("\r")
