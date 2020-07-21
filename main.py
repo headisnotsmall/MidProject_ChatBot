@@ -177,12 +177,12 @@ def handle_price_message(event):
             if interest == ('theme=1,have=0,' or 'theme=1,have=1,'):
                 interest = interest + event.message.text
                 price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
-                print(interest)
+                backinfo = TextSendMessage(interest)
             elif interest == ('theme=2,have=0,' or 'theme=2,have=1,'):
                 interest = interest + event.message.text
                 price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
-                print(interest)
-        line_bot_api.reply_message(event.reply_token, price_ans)
+                backinfo = TextSendMessage(interest)
+        line_bot_api.reply_message(event.reply_token, price_ans, backinfo)
     except:
         pass
     return interest
