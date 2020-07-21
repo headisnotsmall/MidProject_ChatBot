@@ -83,13 +83,13 @@ def handle_follow(event):
             text='選一個有興趣的領域吧！',
             actions=[
                 PostbackAction(
-                    label='3c',
-                    display_text='我想猜猜3c產品',
+                    label='3c (iPhone)',
+                    display_text='我想猜猜iPhone的價格',
                     data='iphone,'
                 ),
                 PostbackAction(
-                    label='電玩',
-                    display_text='我想猜猜看電玩價格',
+                    label='電玩 (Switch)',
+                    display_text='我想猜猜看Switch的價格',
                     data='switch,'
                 ),
                 # PostbackAction(
@@ -116,7 +116,7 @@ def postback_data(event):
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
             template=ConfirmTemplate(
-                text='想了解你使用iPhone的經驗',
+                text='你有用過或正在使用iPhone嗎？',
                 actions=[
                     PostbackAction(
                         label='有',
@@ -138,16 +138,16 @@ def postback_data(event):
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
             template=ConfirmTemplate(
-                text='想了解你使用Switch的經驗',
+                text='你現在有自己的Switch嗎？',
                 actions=[
                     PostbackAction(
                         label='有',
-                        display_text='我有用過Switch',
+                        display_text='我有Switch',
                         data='have,'
                     ),
                     PostbackAction(
                         label='沒有',
-                        display_text='我沒有用過Switch',
+                        display_text='我沒有Switch',
                         data='not_have,'
                     )
                 ]
@@ -157,14 +157,14 @@ def postback_data(event):
 
     elif interest == 'iphone,':
         interest = interest + event.postback.data
-        price_asking = TextSendMessage("猜猜看現在一台\n"
+        price_asking = TextSendMessage("現在請你猜猜看現在一台\n"
                                        "iPhone 11 Pro 64G\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
     elif interest == 'switch,':
         interest = interest + event.postback.data
-        price_asking = TextSendMessage("猜猜看現在一台\n"
+        price_asking = TextSendMessage("現在猜猜看現在一台\n"
                                        "Switch紅藍款 (主機only)\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
