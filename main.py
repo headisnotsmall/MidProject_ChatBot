@@ -44,11 +44,15 @@ def callback():
 # 興趣變數暫存
 
 interest = ""
+_id = ""
+
+
 # 歡迎訊息
 
 
 @handler.add(FollowEvent)
 def handle_follow(event):
+    global _id
     user_profile = line_bot_api.get_profile(event.source.user_id)
     with open("namelist.txt", "a") as myfile:
         myfile.write(
@@ -56,6 +60,7 @@ def handle_follow(event):
                 vars(user_profile)
             )
         )
+        _id = user_profile.user_id
         myfile.write("\r")
 
     follow_text_send_message = TextSendMessage(
@@ -79,17 +84,17 @@ def handle_follow(event):
                 PostbackAction(
                     label='3c',
                     display_text='我想猜猜3c產品',
-                    data='theme=1,'
+                    data='"theme":1,'
                 ),
                 PostbackAction(
                     label='電玩',
                     display_text='我想猜猜看電玩價格',
-                    data='theme=2,'
+                    data='"theme":2,'
                 ),
                 PostbackAction(
                     label='甜點',
                     display_text='我想猜猜甜點價位',
-                    data='theme=3,'
+                    data='"theme":3,'
                 )
             ]
         )
@@ -97,7 +102,7 @@ def handle_follow(event):
 
     line_bot_api.reply_message(event.reply_token, [follow_text_send_message,
                                                    buttons_template_message])
-
+    return _id, print(_id)
 
 # 詢問經驗
 
@@ -105,7 +110,7 @@ def handle_follow(event):
 @handler.add(PostbackEvent)
 def postback_data(event):
     global interest
-    if event.postback.data == 'theme=1,':
+    if event.postback.data == '"theme":1,':
         interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過iPhone嗎？',
@@ -115,19 +120,19 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過iPhone',
-                        data='have=1,'
+                        data='"have":1,'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過iPhone',
-                        data='have=0,'
+                        data='"have":0,'
                     )
                 ]
             )
         )
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif event.postback.data == 'theme=2,':
+    elif event.postback.data == '"theme":2,':
         interest = interest + event.postback.data
         confirm_template_message = TemplateSendMessage(
             alt_text='你有用過Switch嗎？',
@@ -137,26 +142,26 @@ def postback_data(event):
                     PostbackAction(
                         label='有',
                         display_text='我有用過Switch',
-                        data='have=1,'
+                        data='"have":1,'
                     ),
                     PostbackAction(
                         label='沒有',
                         display_text='我沒有用過Switch',
-                        data='have=0,'
+                        data='"have":0,'
                     )
                 ]
             )
         )
         line_bot_api.reply_message(event.reply_token, confirm_template_message)
 
-    elif interest == 'theme=1,':
+    elif interest == '"theme":1,':
         interest = interest + event.postback.data
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "iPhone 11 Pro 64G\n"
                                        "售價大概多少錢呢？")
         line_bot_api.reply_message(event.reply_token, price_asking)
 
-    elif interest == 'theme=2,':
+    elif interest == '"theme":2,':
         interest = interest + event.postback.data
         price_asking = TextSendMessage("猜猜看現在一台\n"
                                        "Switch紅藍款 (主機only)\n"
@@ -174,17 +179,21 @@ def handle_price_message(event):
     global interest
     try:
         if int(event.message.text):
-            if interest in ['theme=1,have=0,', 'theme=1,have=1,']:
-                interest = interest + event.message.text
-                price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
-                backinfo = TextSendMessage(interest.text)
-            elif interest in ['theme=2,have=0,', 'theme=2,have=1,']:
-                interest = interest + event.message.text
-                price_ans = TextSendMessage("你確定要猜" + event.message.text + "元嗎？")
-                backinfo = TextSendMessage(interest.text)
-        line_bot_api.reply_message(event.reply_token, price_ans, backinfo)
+            if interest in ['"theme":1,"have":0,', '"theme":1,"have":1,']:
+                interest = "{" + interest + '"price":' + event.message.text + "}"
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + interest)
+            elif interest in ['"theme":2,"have":0,', '"theme":2,"have":1,']:
+                interest = "{" + interest + '"price":' + event.message.text + "}"
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + interest)
+
+            line_bot_api.reply_message(event.reply_token, reply_message)  # fixme 拿掉sendmessage的interest
+
+            with open("guesslist.txt", "a") as myfile:
+                myfile.write(interest)
+                myfile.write("\r")
     except:
         pass
+    interest = ""
     return interest
 
 
@@ -202,9 +211,9 @@ def handle_price_message(event):
 # TODO 圖文選單
 
 
-# if __name__ == "__main__":
-#     app.run()
+if __name__ == "__main__":
+    app.run()
 
 # https://howimuchisthis.herokuapp.com
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ['PORT'])
+# if __name__ == "__main__":
+#     app.run(host='0.0.0.0', port=os.environ['PORT'])
