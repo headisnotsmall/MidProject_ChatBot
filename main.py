@@ -78,7 +78,7 @@ def handle_follow(event):
     buttons_template_message = TemplateSendMessage(
         alt_text='Buttons template',
         template=ButtonsTemplate(
-            thumbnail_image_url='https://images.plurk.com/64ZDVCsKT7rRdkODQ9xWnN.jpg',
+            thumbnail_image_url='https://c0.wallpaperflare.com/preview/124/695/733/doors-choices-choose-open.jpg',
             title='我想猜這個',
             text='選一個有興趣的領域吧！',
             actions=[
@@ -180,15 +180,29 @@ def handle_price_message(event):
     global interest
     try:
         if int(event.message.text):
+            a = int(event.message.text)
             if interest in ['iphone,not_have,', 'iphone,have,']:
                 interest = interest + event.message.text
-                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
+                if a > 35900 * 1.05:
+                    result = "你高估囉！官方價格目前是35900元"
+                elif a < 35900 * 0.95:
+                    result = "你低估囉！官方價格目前是35900元"
+                else:
+                    result = "猜得很準喔！官方價格目前是35900元"
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + result)
+
             elif interest in ['switch,not_have,', 'switch,have,']:
                 interest = interest + event.message.text
-                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元")
+                if a > 9780 * 1.05:
+                    result = "你高估囉！官方價格目前是9780元"
+                elif a < 9780 * 0.95:
+                    result = "你低估囉！官方價格目前是9780元"
+                else:
+                    result = "猜得很準喔！官方價格目前是9780元"
+                reply_message = TextSendMessage("你猜的價格為" + event.message.text + "元\n" + result)
 
             text_quickreply1 = QuickReplyButton(action=MessageAction(label="正確", text="就猜這個"))
-            text_quickreply2 = QuickReplyButton(action=MessageAction(label="錯誤", text="那我們重來一次"))
+            text_quickreply2 = QuickReplyButton(action=MessageAction(label="錯誤", text="再玩一次"))
             quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
 
             reply_text_message = TextSendMessage(reply_message.text, quick_reply=quick_reply_array)
@@ -201,15 +215,20 @@ def handle_price_message(event):
     except:
         if event.message.text == "就猜這個":
             static_chart = ImageSendMessage(
-                original_content_url="https://images.plurk.com/2nA3V4zBaRMtPicEvrK4pC.jpg",
-                preview_image_url="https://images.plurk.com/29raxzfw1iC52tLqlPTVz1.jpg"
+                original_content_url="https://images.plurk.com/29raxzfw1iC52tLqlPTVz1.jpg",
+                preview_image_url="https://images.plurk.com/2nA3V4zBaRMtPicEvrK4pC.jpg"
             )
-            line_bot_api.reply_message(event.reply_token, static_chart)
-        elif event.message.text == "那我們重來一次":
+            text_quickreply1 = QuickReplyButton(action=MessageAction(label="猜猜別的", text="再玩一次"))
+            text_quickreply2 = QuickReplyButton(action=MessageAction(label="不想猜了", text="我不玩了"))
+            quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
+
+            reply_text_message = TextSendMessage(static_chart, quick_reply=quick_reply_array)
+            line_bot_api.reply_message(event.reply_token, reply_text_message)
+        elif event.message.text == "再玩一次":
             buttons_template_message = TemplateSendMessage(
                 alt_text='Buttons template',
                 template=ButtonsTemplate(
-                    thumbnail_image_url='https://images.plurk.com/64ZDVCsKT7rRdkODQ9xWnN.jpg',
+                    thumbnail_image_url='https://c0.wallpaperflare.com/preview/124/695/733/doors-choices-choose-open.jpg',
                     title='我想猜這個',
                     text='選一個有興趣的領域吧！',
                     actions=[
