@@ -218,12 +218,12 @@ def handle_price_message(event):
                 original_content_url="https://images.plurk.com/29raxzfw1iC52tLqlPTVz1.jpg",
                 preview_image_url="https://images.plurk.com/2nA3V4zBaRMtPicEvrK4pC.jpg"
             )
-            text_quickreply1 = QuickReplyButton(action=MessageAction(label="猜猜別的", text="再玩一次"))
-            text_quickreply2 = QuickReplyButton(action=MessageAction(label="不想猜了", text="我不玩了"))
-            quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
-            test_reply = TextSendMessage("要猜猜看別的嗎？")
-            reply_text_message = TextSendMessage(test_reply, quick_reply=quick_reply_array)
-            line_bot_api.reply_message(event.reply_token, [static_chart, reply_text_message])
+            # text_quickreply1 = QuickReplyButton(action=MessageAction(label="猜猜別的", text="再玩一次"))
+            # text_quickreply2 = QuickReplyButton(action=MessageAction(label="不想猜了", text="我不玩了"))
+            # quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
+            # test_reply = TextSendMessage("要猜猜看別的嗎？")
+            # reply_text_message = TextSendMessage(test_reply, quick_reply=quick_reply_array)
+            line_bot_api.reply_message(event.reply_token, [reply_text_message])
         elif event.message.text == "再玩一次":
             buttons_template_message = TemplateSendMessage(
                 alt_text='Buttons template',
