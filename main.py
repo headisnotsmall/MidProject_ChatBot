@@ -223,7 +223,7 @@ def handle_price_message(event):
             # quick_reply_array = QuickReply(items=[text_quickreply1, text_quickreply2])
             # test_reply = TextSendMessage("要猜猜看別的嗎？")
             # reply_text_message = TextSendMessage(test_reply, quick_reply=quick_reply_array)
-            line_bot_api.reply_message(event.reply_token, [reply_text_message])
+            line_bot_api.reply_message(event.reply_token, [static_chart])
         elif event.message.text == "再玩一次":
             buttons_template_message = TemplateSendMessage(
                 alt_text='Buttons template',
